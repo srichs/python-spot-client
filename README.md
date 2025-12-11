@@ -1,4 +1,4 @@
-# python-spot
+# python-spot-client
 
 An asynchronous Python client for retrieving message feeds from the [SPOT device API](https://www.findmespot.com/en-us/support/spot-gen4/get-help/general/public-api-and-xml-feed).
 
