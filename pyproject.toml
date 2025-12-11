@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python-spot"
+version = "0.1.0"
+description = "Asynchronous client for the SPOT device API"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    {name = "srichs", email = "13246896+srichs@users.noreply.github.com"},
+]
+dependencies = [
+    "httpx>=0.24.1",
+]
+
+[project.optional-dependencies]
+docs = [
+    "sphinx>=7.2",
+    "furo>=2023.7.26",
+]
+test = [
+    "pytest>=7.4",
+]
+lint = [
+    "mypy>=1.6",
+    "ruff>=0.1.5",
+]
+
+[project.urls]
+Homepage = "https://github.com/srichs/python-spot-client"

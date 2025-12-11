@@ -1,0 +1,7 @@
+config
+spot_api/__pycache__
+tests/__pycache__
+example.py
+.venv
+python_spot.egg-info
+.pytest_cache
