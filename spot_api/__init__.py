@@ -1,4 +1,5 @@
 """Public exports for the Spot API package."""
+
 from .client import SpotApi, SpotRequestResult, SpotRequestStatus
 from .enums import (
     SpotBatteryState,

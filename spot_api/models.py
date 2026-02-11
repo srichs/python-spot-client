@@ -1,4 +1,5 @@
 """Data models and parsing helpers for Spot API responses."""
+
 from __future__ import annotations
 
 import datetime
@@ -107,10 +108,18 @@ class SpotMessage:
         if not isinstance(message, Mapping):
             raise TypeError("message must be a mapping")
 
-        required_fields = ["@clientUnixTime", "id", "messengerId", "messengerName", "unixTime"]
+        required_fields = [
+            "@clientUnixTime",
+            "id",
+            "messengerId",
+            "messengerName",
+            "unixTime",
+        ]
         missing_fields = [field for field in required_fields if field not in message]
         if missing_fields:
-            logger.warning("Missing expected message fields: %s", ", ".join(missing_fields))
+            logger.warning(
+                "Missing expected message fields: %s", ", ".join(missing_fields)
+            )
 
         message_type = None
         if "messageType" in message:
@@ -131,7 +140,9 @@ class SpotMessage:
 
         date_time = _parse_datetime(message.get("dateTime"))
         raw_battery_state = message.get("batteryState")
-        battery_state = SpotBatteryState.from_str("" if raw_battery_state is None else str(raw_battery_state))
+        battery_state = SpotBatteryState.from_str(
+            "" if raw_battery_state is None else str(raw_battery_state)
+        )
 
         hidden = _coerce_int(message.get("hidden", 0))
         altitude = _coerce_int(message.get("altitude", 0))
@@ -167,9 +178,7 @@ class SpotMessage:
             else:
                 return datetime.datetime.fromtimestamp(
                     unix_time_int, tz=datetime.timezone.utc
-                ).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
+                ).strftime("%Y-%m-%d %H:%M:%S")
 
         return ""
 
@@ -193,12 +202,12 @@ class SpotMessage:
     def __str__(self) -> str:
         msg_str = "-------------------------------\n"
         msg_str += f"Spot Message ({self.id})\n"
-        msg_str += (
-            f"'{self.messenger_name}' {self.messenger_id} ({self.model_id} - {self.message_type})\n"
-        )
+        msg_str += f"'{self.messenger_name}' {self.messenger_id} ({self.model_id} - {self.message_type})\n"
         msg_str += f"Battery: {self.battery_state}\n"
         timestamp = (
-            self.date_time.isoformat(" ") if self.date_time is not None else self.get_short_datetime()
+            self.date_time.isoformat(" ")
+            if self.date_time is not None
+            else self.get_short_datetime()
         )
         msg_str += f"{timestamp} ({self.unix_time})\n"
         msg_str += self.get_location()
@@ -228,17 +237,22 @@ class SpotFeed:
             raise TypeError("response must be a mapping")
 
         if "response" not in response:
-            logger.warning("No response payload present in Spot feed data: %s", response)
+            logger.warning(
+                "No response payload present in Spot feed data: %s", response
+            )
             return
 
         if "feedMessageResponse" not in response["response"]:
-            logger.warning("No feedMessageResponse present in Spot feed response: %s", response)
+            logger.warning(
+                "No feedMessageResponse present in Spot feed response: %s", response
+            )
             return
 
         feed_message_response = response["response"]["feedMessageResponse"]
         if not isinstance(feed_message_response, Mapping):
             logger.warning(
-                "feedMessageResponse payload was not a mapping in feed %s response", self.id
+                "feedMessageResponse payload was not a mapping in feed %s response",
+                self.id,
             )
             return
         feed_json = feed_message_response.get("feed", {})
@@ -249,9 +263,7 @@ class SpotFeed:
         self.description = feed_json.get("description", "")
         raw_status = feed_json.get("status")
         self.status = (
-            SpotFeedStatus.from_str(str(raw_status))
-            if raw_status is not None
-            else None
+            SpotFeedStatus.from_str(str(raw_status)) if raw_status is not None else None
         )
         self.usage = _coerce_int(feed_json.get("usage", 0))
         self.days_range = _coerce_int(feed_json.get("daysRange", 0))
@@ -260,9 +272,7 @@ class SpotFeed:
         )
         raw_type = feed_json.get("type")
         self.type = (
-            SpotFeedType.from_str(str(raw_type))
-            if raw_type is not None
-            else None
+            SpotFeedType.from_str(str(raw_type)) if raw_type is not None else None
         )
         count = _coerce_int(feed_message_response.get("count", 0))
 
@@ -291,7 +301,9 @@ class SpotFeed:
         iterable: Iterable
         if isinstance(message_payload, Mapping):
             iterable = message_payload.values()
-        elif isinstance(message_payload, Sequence) and not isinstance(message_payload, (str, bytes)):
+        elif isinstance(message_payload, Sequence) and not isinstance(
+            message_payload, (str, bytes)
+        ):
             iterable = message_payload
         else:
             logger.warning(
@@ -311,7 +323,9 @@ class SpotFeed:
                 continue
             msg_id = message_json.get("messengerId")
             if not msg_id:
-                logger.warning("Encountered message without messengerId in feed %s", self.id)
+                logger.warning(
+                    "Encountered message without messengerId in feed %s", self.id
+                )
                 continue
 
             message = SpotMessage.from_json(message_json)
@@ -335,7 +349,8 @@ class SpotFeed:
             all_messages.extend(device_messages)
 
         all_messages.sort(
-            key=lambda message: message.date_time or datetime.datetime.min.replace(tzinfo=datetime.timezone.utc),
+            key=lambda message: message.date_time
+            or datetime.datetime.min.replace(tzinfo=datetime.timezone.utc),
             reverse=newest_first,
         )
 

@@ -1,4 +1,5 @@
 """Async client implementation for interacting with the Spot API."""
+
 from __future__ import annotations
 
 import asyncio
@@ -73,7 +74,9 @@ T = TypeVar("T")
 class SpotApi(object):
     """High-level interface for accessing Spot feeds and messages."""
 
-    SPOT_API_ENDPOINT: str = "https://api.findmespot.com/spot-main-web/consumer/rest-api/2.0/public/feed/"
+    SPOT_API_ENDPOINT: str = (
+        "https://api.findmespot.com/spot-main-web/consumer/rest-api/2.0/public/feed/"
+    )
     # Spot asks to wait at least 2.5 minutes between requests of the same feed
     SPOT_API_WAIT_TIME: int = 150
     # Spot asks to wait at least 2 seconds between requests for different feeds
@@ -148,9 +151,7 @@ class SpotApi(object):
             return None
         return self._last_response.get(target_feed_id)
 
-    def _normalize_feed_list(
-        self, feed_list: Iterable[FeedEntry]
-    ) -> list[FeedEntry]:
+    def _normalize_feed_list(self, feed_list: Iterable[FeedEntry]) -> list[FeedEntry]:
         """Validate and normalize the configured feeds.
 
         Converting the IDs and passwords to strings up front ensures the rest of the
@@ -467,7 +468,10 @@ class SpotApi(object):
 
             if result.status is SpotRequestStatus.THROTTLED:
                 throttle_count += 1
-                if max_throttled_retries is not None and throttle_count > max_throttled_retries:
+                if (
+                    max_throttled_retries is not None
+                    and throttle_count > max_throttled_retries
+                ):
                     logger.warning(
                         "Aborting pagination for feed %s after %s throttled responses",
                         feed.id,
@@ -518,7 +522,9 @@ class SpotApi(object):
         allowed, wait_seconds = self._can_dispatch_request(feed)
         if not allowed:
             logger.debug(
-                "Throttling request for feed %s; %.2f seconds remaining", feed.id, wait_seconds
+                "Throttling request for feed %s; %.2f seconds remaining",
+                feed.id,
+                wait_seconds,
             )
             return SpotRequestResult(
                 SpotRequestStatus.THROTTLED,
@@ -582,7 +588,9 @@ class SpotApi(object):
     ) -> httpx.Response | SpotRequestResult:
         try:
             client = self._ensure_client()
-            response = await client.get(url, params=payload, headers=headers_for_request)
+            response = await client.get(
+                url, params=payload, headers=headers_for_request
+            )
             response.raise_for_status()
         except httpx.HTTPError as exc:
             logger.exception("HTTP error while contacting Spot API")
@@ -770,7 +778,9 @@ class SpotApi(object):
             return default_wait
 
         try:
-            retry_after = response.headers.get("Retry-After") if response.headers else None
+            retry_after = (
+                response.headers.get("Retry-After") if response.headers else None
+            )
         except Exception:  # pragma: no cover - defensive
             retry_after = None
 
@@ -839,7 +849,9 @@ class SpotApi(object):
 
         if start_dt and end_dt:
             if end_dt < start_dt:
-                raise ValueError("End datetime must be greater than or equal to start datetime")
+                raise ValueError(
+                    "End datetime must be greater than or equal to start datetime"
+                )
 
             payload["startDate"] = self._format_request_datetime(start_dt)
             payload["endDate"] = self._format_request_datetime(end_dt)
@@ -906,7 +918,7 @@ class SpotApi(object):
 
     @staticmethod
     def _normalize_headers(
-        headers: Optional[Mapping[str, str]]
+        headers: Optional[Mapping[str, str]],
     ) -> Optional[Dict[str, str]]:
         if headers is None:
             return None
@@ -919,7 +931,7 @@ class SpotApi(object):
 
     @staticmethod
     def _normalize_query_params(
-        params: Optional[Mapping[str, str]]
+        params: Optional[Mapping[str, str]],
     ) -> Optional[Dict[str, str]]:
         if params is None:
             return None
@@ -1021,7 +1033,9 @@ class SpotApi(object):
         try:
             await client.aclose()
         except Exception:  # pragma: no cover - defensive cleanup
-            logger.warning("Failed to close AsyncClient after synchronous run", exc_info=True)
+            logger.warning(
+                "Failed to close AsyncClient after synchronous run", exc_info=True
+            )
 
     @staticmethod
     def _now() -> datetime.datetime:
