@@ -88,6 +88,11 @@ def test_spot_api_requires_password_in_each_feed_entry():
         SpotApi([("feed-one", "secret"), ("feed-two",)])
 
 
+def test_spot_api_rejects_duplicate_feed_ids():
+    with pytest.raises(ValueError, match="Duplicate feed ID configured"):
+        SpotApi([("feed-one", "secret"), ("feed-one", "other")])
+
+
 def test_spot_api_requires_non_empty_feed_list():
     with pytest.raises(ValueError):
         SpotApi([])
