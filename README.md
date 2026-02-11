@@ -1,5 +1,8 @@
 # python-spot-client
 
+[![CI](https://github.com/srichs/python-spot-client/actions/workflows/ci.yml/badge.svg)](https://github.com/srichs/python-spot-client/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/python-spot.svg)](https://pypi.org/project/python-spot/)
+
 An asynchronous Python client for retrieving message feeds from the [SPOT device API](https://www.findmespot.com/en-us/support/spot-gen4/get-help/general/public-api-and-xml-feed).
 
 ## Features
@@ -10,7 +13,7 @@ An asynchronous Python client for retrieving message feeds from the [SPOT device
 
 ## Installation
 
-Install the package in your current environment:
+Install the package from the repository root in your current environment:
 
 ```bash
 pip install .
@@ -29,7 +32,10 @@ Or use the convenience dev requirements file:
 pip install -r requirements-dev.txt
 ```
 
-## Usage
+## Quick start
+
+To authenticate requests, pass one or more `(feed_id, password)` tuples when
+creating the client.
 
 The client wraps the SPOT REST API and exposes models that make it easier to
 inspect devices, feeds, and messages. The example below fetches the latest
@@ -58,14 +64,19 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
+## Usage
+
 For scripts that do not already run an event loop, call the synchronous
 wrappers instead:
 
 ```python
 with SpotApi([("<your-feed-id>", "<feed-password>")]) as client:
     result = client.request_latest_sync()
+```
 
-# Alternatively, call ``close`` explicitly when you are done.
+Or manage lifecycle manually:
+
+```python
 client = SpotApi([("<your-feed-id>", "<feed-password>")])
 result = client.request_latest_sync()
 client.close()
@@ -149,6 +160,17 @@ any request. Inspect its `devices` dictionary or use helper methods such as
 `get_latest_messages`, `iter_messages`, or `iter_messages_by_type` to work with
 the returned data.
 
+### Interpreting request results
+
+Every request helper returns a `SpotRequestResult` object containing:
+
+- `status`: the high-level result state (for example success or throttled).
+- `succeeded`: convenience boolean equivalent to a successful status.
+- `wait_seconds`: recommended wait time when requests are throttled.
+
+This makes it straightforward to branch on status without parsing exceptions or
+raw HTTP responses.
+
 ### Working with feeds and messages
 
 `SpotFeed` and `SpotMessage` provide several convenience helpers for common
@@ -203,3 +225,10 @@ pytest
 The project metadata and build configuration live in `pyproject.toml`. Static
 analysis helpers (mypy and ruff) are also included in the `lint` optional
 dependency group.
+
+## Security notes
+
+- Treat feed passwords like credentials; avoid committing them to source
+  control.
+- Prefer environment variables or a local secrets manager for production usage
+  instead of hard-coding feed credentials directly in scripts.
