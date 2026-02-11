@@ -34,3 +34,13 @@ Homepage = "https://github.com/srichs/python-spot-client"
 
 [tool.black]
 target-version = ["py311"]
+
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

@@ -8,8 +8,9 @@ from datetime import datetime
 
 # Ensure the package can be imported when building the docs.
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)
+SRC = os.path.join(ROOT, "src")
+if SRC not in sys.path:
+    sys.path.insert(0, SRC)
 
 project = "python-spot"
 author = "srichs"
