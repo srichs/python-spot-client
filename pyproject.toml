@@ -9,7 +9,7 @@ description = "Asynchronous client for the SPOT device API"
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [
-    {name = "srichs", email = "13246896+srichs@users.noreply.github.com"},
+    {name = "srichs", email = "srichs@pm.me"},
 ]
 dependencies = [
     "httpx>=0.24.1",
