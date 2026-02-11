@@ -1,4 +1,5 @@
 """Sphinx configuration for the python-spot documentation."""
+
 from __future__ import annotations
 
 import os
@@ -34,5 +35,5 @@ templates_path = ["_templates"]
 exclude_patterns: list[str] = ["_build"]
 
 html_static_path = ["_static"]
-#html_theme = "alabaster"
+# html_theme = "alabaster"
 html_theme = "furo"

@@ -1,4 +1,5 @@
 """Enumeration definitions for the Spot API client."""
+
 from __future__ import annotations
 
 import logging

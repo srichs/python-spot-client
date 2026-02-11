@@ -313,10 +313,16 @@ def test_coerce_int_handles_invalid_values(value, expected, caplog):
 @pytest.mark.parametrize(
     "raw, expected",
     [
-        ("2023-07-14T16:30:05+0000", datetime.datetime(2023, 7, 14, 16, 30, 5, tzinfo=UTC)),
+        (
+            "2023-07-14T16:30:05+0000",
+            datetime.datetime(2023, 7, 14, 16, 30, 5, tzinfo=UTC),
+        ),
         ("2023-07-14T16:30:05", datetime.datetime(2023, 7, 14, 16, 30, 5, tzinfo=UTC)),
         ("2023-07-14T16:30:05Z", datetime.datetime(2023, 7, 14, 16, 30, 5, tzinfo=UTC)),
-        ("2023-07-14T16:30:05-0700", datetime.datetime(2023, 7, 14, 23, 30, 5, tzinfo=UTC)),
+        (
+            "2023-07-14T16:30:05-0700",
+            datetime.datetime(2023, 7, 14, 23, 30, 5, tzinfo=UTC),
+        ),
         (None, None),
     ],
 )
@@ -388,12 +394,9 @@ def test_spot_message_get_short_datetime_prefers_datetime():
         date_time=datetime.datetime(2023, 7, 14, 16, 30, 5, tzinfo=UTC)
     )
 
-    assert (
-        message.get_short_datetime()
-        == datetime.datetime(2023, 7, 14, 16, 30, 5, tzinfo=UTC).strftime(
-            "%Y-%m-%d %H:%M:%S"
-        )
-    )
+    assert message.get_short_datetime() == datetime.datetime(
+        2023, 7, 14, 16, 30, 5, tzinfo=UTC
+    ).strftime("%Y-%m-%d %H:%M:%S")
 
 
 def test_spot_message_get_short_datetime_falls_back_to_unix_time():
@@ -402,12 +405,9 @@ def test_spot_message_get_short_datetime_falls_back_to_unix_time():
     )
     message = SpotMessage(unix_time=str(unix_timestamp))
 
-    assert (
-        message.get_short_datetime()
-        == datetime.datetime(2023, 7, 14, 16, 30, 5, tzinfo=UTC).strftime(
-            "%Y-%m-%d %H:%M:%S"
-        )
-    )
+    assert message.get_short_datetime() == datetime.datetime(
+        2023, 7, 14, 16, 30, 5, tzinfo=UTC
+    ).strftime("%Y-%m-%d %H:%M:%S")
 
 
 def test_spot_message_get_short_datetime_handles_missing_timestamps():
@@ -1154,7 +1154,9 @@ def test_request_sync_executes_request_without_event_loop():
     payload = {
         "response": {"feedMessageResponse": {"feed": {}, "messages": {"message": []}}}
     }
-    api = SpotApi([("feed", None)], client=_DummyHttpClient(_DummyHttpResponse(payload)))
+    api = SpotApi(
+        [("feed", None)], client=_DummyHttpClient(_DummyHttpResponse(payload))
+    )
 
     result = api.request_sync()
 
@@ -1165,7 +1167,9 @@ def test_request_sync_handles_running_event_loop_via_executor():
     payload = {
         "response": {"feedMessageResponse": {"feed": {}, "messages": {"message": []}}}
     }
-    api = SpotApi([("feed", None)], client=_DummyHttpClient(_DummyHttpResponse(payload)))
+    api = SpotApi(
+        [("feed", None)], client=_DummyHttpClient(_DummyHttpResponse(payload))
+    )
 
     async def invoke_sync_request():
         result = api.request_sync()
@@ -1255,7 +1259,11 @@ def test_request_merge_accumulates_messages_across_pages():
     }
 
     client = _SequencedHttpClient(
-        [_DummyHttpResponse(page_one), _DummyHttpResponse(page_two), _DummyHttpResponse(page_two)]
+        [
+            _DummyHttpResponse(page_one),
+            _DummyHttpResponse(page_two),
+            _DummyHttpResponse(page_two),
+        ]
     )
     api = SpotApi([("feed", None)], client=client)
     baseline = datetime.datetime(2023, 1, 1, tzinfo=UTC)
@@ -1264,14 +1272,18 @@ def test_request_merge_accumulates_messages_across_pages():
     first_result = asyncio.run(api.request(page=1))
     assert first_result.status is SpotRequestStatus.SUCCESS
 
-    api._now = lambda: baseline + datetime.timedelta(seconds=SpotApi.SPOT_API_WAIT_TIME + 1)
+    api._now = lambda: baseline + datetime.timedelta(
+        seconds=SpotApi.SPOT_API_WAIT_TIME + 1
+    )
     second_result = asyncio.run(api.request(page=2, merge=True))
     assert second_result.status is SpotRequestStatus.SUCCESS
 
     feed = api.get_feed()
     assert [message.id for message in feed.devices["DEVICE1"]] == [322, 321]
 
-    api._now = lambda: baseline + datetime.timedelta(seconds=2 * (SpotApi.SPOT_API_WAIT_TIME + 1))
+    api._now = lambda: baseline + datetime.timedelta(
+        seconds=2 * (SpotApi.SPOT_API_WAIT_TIME + 1)
+    )
     third_result = asyncio.run(api.request(page=2, merge=True))
     assert third_result.status is SpotRequestStatus.SUCCESS
     assert [message.id for message in feed.devices["DEVICE1"]] == [322, 321]
@@ -1331,7 +1343,9 @@ def test_request_all_pages_fetches_sequential_pages():
         }
     }
 
-    client = _SequencedHttpClient([_DummyHttpResponse(page_one), _DummyHttpResponse(page_two)])
+    client = _SequencedHttpClient(
+        [_DummyHttpResponse(page_one), _DummyHttpResponse(page_two)]
+    )
     api = SpotApi([("feed", None)], client=client)
 
     baseline = datetime.datetime(2023, 1, 1, tzinfo=UTC)
@@ -1387,7 +1401,9 @@ def test_request_all_pages_respects_custom_page_size():
         }
     }
 
-    client = _SequencedHttpClient([_DummyHttpResponse(page_one), _DummyHttpResponse(page_two)])
+    client = _SequencedHttpClient(
+        [_DummyHttpResponse(page_one), _DummyHttpResponse(page_two)]
+    )
     api = SpotApi([("feed", None)], client=client)
 
     baseline = datetime.datetime(2023, 1, 1, tzinfo=UTC)
@@ -1447,7 +1463,9 @@ def test_request_all_pages_honors_throttle_budget():
     api = SpotApi([("feed", None)])
     feed = api.get_feed()
 
-    throttled_result = SpotRequestResult(SpotRequestStatus.THROTTLED, feed, wait_seconds=0.0)
+    throttled_result = SpotRequestResult(
+        SpotRequestStatus.THROTTLED, feed, wait_seconds=0.0
+    )
     success_payload = {
         "response": {
             "feedMessageResponse": {
@@ -1529,7 +1547,9 @@ def test_request_all_pages_applies_exponential_backoff(monkeypatch):
 
     results = asyncio.run(collect())
 
-    assert [result.status for result in results[:-1]] == [SpotRequestStatus.THROTTLED] * 3
+    assert [result.status for result in results[:-1]] == [
+        SpotRequestStatus.THROTTLED
+    ] * 3
     assert results[-1].status is SpotRequestStatus.SUCCESS
     assert observed_waits == pytest.approx([2.0, 4.0, 8.0])
 
@@ -1580,7 +1600,9 @@ def test_request_treats_http_429_as_throttled():
         text="Too Many Requests",
         headers={"Retry-After": "120"},
     )
-    transport_error = httpx.HTTPStatusError("too many", request=request, response=response)
+    transport_error = httpx.HTTPStatusError(
+        "too many", request=request, response=response
+    )
     client = _DummyHttpClient(transport_error)
     api = SpotApi([("feed", None)], client=client)
     baseline = datetime.datetime(2023, 1, 1, tzinfo=UTC)
@@ -1600,7 +1622,9 @@ def test_request_treats_http_429_as_throttled():
 
 def test_request_includes_response_details_for_http_status_error():
     request = httpx.Request("GET", "https://example.test/feed/message.json")
-    response = httpx.Response(503, request=request, text="Service unavailable", headers={"X-Test": "1"})
+    response = httpx.Response(
+        503, request=request, text="Service unavailable", headers={"X-Test": "1"}
+    )
     transport_error = httpx.HTTPStatusError("boom", request=request, response=response)
     client = _DummyHttpClient(transport_error)
     api = SpotApi([("feed", None)], client=client)
@@ -1623,4 +1647,3 @@ def test_aclose_skips_external_client_shutdown():
     asyncio.run(api.aclose())
 
     assert client.closed is False
-
