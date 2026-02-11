@@ -31,3 +31,6 @@ lint = [
 
 [project.urls]
 Homepage = "https://github.com/srichs/python-spot-client"
+
+[tool.black]
+target-version = ["py311"]
