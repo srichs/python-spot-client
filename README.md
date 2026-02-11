@@ -23,6 +23,12 @@ documentation, test, and linting extras:
 pip install -e .[docs,test,lint]
 ```
 
+Or use the convenience dev requirements file:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
 ## Usage
 
 The client wraps the SPOT REST API and exposes models that make it easier to
