@@ -66,6 +66,7 @@ class SpotRequestResult:
 
 
 FeedEntry = tuple[str, Optional[str]]
+NormalizedFeedEntry = tuple[str, str]
 
 
 T = TypeVar("T")
@@ -151,7 +152,9 @@ class SpotApi(object):
             return None
         return self._last_response.get(target_feed_id)
 
-    def _normalize_feed_list(self, feed_list: Iterable[FeedEntry]) -> list[FeedEntry]:
+    def _normalize_feed_list(
+        self, feed_list: Iterable[FeedEntry]
+    ) -> list[NormalizedFeedEntry]:
         """Validate and normalize the configured feeds.
 
         Converting the IDs and passwords to strings up front ensures the rest of the
@@ -161,7 +164,7 @@ class SpotApi(object):
         if feed_list is None:
             raise ValueError("feed_list must be provided")
 
-        normalized_feeds = []
+        normalized_feeds: list[NormalizedFeedEntry] = []
         for feed_entry in feed_list:
             try:
                 current_feed_id, password = feed_entry
