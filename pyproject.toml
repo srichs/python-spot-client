@@ -24,7 +24,7 @@ test = [
     "pytest>=7.4",
 ]
 lint = [
-    "black>=24.0",
+    "black>=24.0,<25.0",
     "mypy>=1.6",
     "ruff>=0.1.5",
 ]
