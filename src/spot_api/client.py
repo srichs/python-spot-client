@@ -165,6 +165,7 @@ class SpotApi(object):
             raise ValueError("feed_list must be provided")
 
         normalized_feeds: list[NormalizedFeedEntry] = []
+        seen_feed_ids: set[str] = set()
         for feed_entry in feed_list:
             try:
                 current_feed_id, password = feed_entry
@@ -174,6 +175,9 @@ class SpotApi(object):
                 ) from exc
 
             feed_id = str(current_feed_id)
+            if feed_id in seen_feed_ids:
+                raise ValueError(f"Duplicate feed ID configured: {feed_id}")
+            seen_feed_ids.add(feed_id)
             password_value = "" if password is None else str(password)
             normalized_feeds.append((feed_id, password_value))
 
