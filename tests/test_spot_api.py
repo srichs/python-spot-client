@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from spot_api import (
+from spot_api import (  # noqa: E402
     SpotApi,
     SpotBatteryState,
     SpotDeviceType,
@@ -33,7 +33,7 @@ from spot_api import (
     _parse_datetime,
 )
 
-import spot_api.client
+import spot_api.client  # noqa: E402
 
 
 UTC = datetime.timezone.utc
