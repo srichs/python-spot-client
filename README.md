@@ -13,13 +13,13 @@ An asynchronous Python client for retrieving message feeds from the [SPOT device
 
 ## Installation
 
-Install the package from the repository root in your current environment:
+Install the latest published release from PyPI:
 
 ```bash
-pip install .
+pip install python-spot-client
 ```
 
-For local development install the runtime dependencies together with the
+For local development, clone this repository and install the runtime dependencies together with the
 documentation, test, and linting extras:
 
 ```bash
