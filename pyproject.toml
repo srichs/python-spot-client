@@ -23,7 +23,7 @@ docs = [
 ]
 test = [
     "pytest>=7.4",
-    "pytest-cove>=7.0",
+    "pytest-cov>=7.0",
 ]
 lint = [
     "black>=24.0,<25.0",
