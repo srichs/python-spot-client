@@ -1,7 +1,7 @@
 # python-spot-client
 
 [![CI](https://github.com/srichs/python-spot-client/actions/workflows/ci.yml/badge.svg)](https://github.com/srichs/python-spot-client/actions/workflows/ci.yml)
-[![Docs build](https://img.shields.io/github/actions/workflow/status/srichs/python-spot-client/ci.yml?branch=main&label=docs%20build)](https://github.com/srichs/python-spot-client/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/github/actions/workflow/status/srichs/python-spot-client/ci.yml?branch=main&label=docs%20build)](https://github.com/srichs/python-spot-client/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/python-spot-client.svg)](https://pypi.org/project/python-spot-client/)
 
 An asynchronous Python client for retrieving message feeds from the [SPOT device API](https://www.findmespot.com/en-us/support/spot-gen4/get-help/general/public-api-and-xml-feed).
