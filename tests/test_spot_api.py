@@ -379,6 +379,22 @@ def test_spot_message_from_json_coerces_types():
     assert message.altitude == 123
 
 
+@pytest.mark.parametrize("raw_value", ["Y", "y", "yes", True, 1])
+def test_spot_message_from_json_coerces_show_custom_message(raw_value):
+    message_json = {
+        "@clientUnixTime": "1689347405",
+        "id": "123",
+        "messengerId": "ABC123",
+        "messengerName": "Test Device",
+        "unixTime": "1689347405",
+        "showCustomMsg": raw_value,
+    }
+
+    message = SpotMessage.from_json(message_json)
+
+    assert message.show_custom_message is True
+
+
 def test_spot_message_from_json_clamps_invalid_coordinates():
     message_json = {
         "@clientUnixTime": "1689347405",

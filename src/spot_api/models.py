@@ -136,7 +136,7 @@ class SpotMessage:
             if raw_model_id is not None:
                 model_id = SpotDeviceType.from_str(str(raw_model_id))
 
-        show_custom_message = message.get("showCustomMsg", "") == "Y"
+        show_custom_message = _coerce_bool(message.get("showCustomMsg", False))
 
         date_time = _parse_datetime(message.get("dateTime"))
         raw_battery_state = message.get("batteryState")
