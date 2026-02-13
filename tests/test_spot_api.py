@@ -60,6 +60,10 @@ def test_coerce_bool_handles_common_representations(value, expected):
     assert _coerce_bool(value) is expected
 
 
+def test_models_module_exports_coerce_bool_in_all():
+    assert "_coerce_bool" in spot_api.models.__all__
+
+
 def test_spot_api_defaults_to_no_password_for_unprotected_feed():
     api = SpotApi([("feed123", None)])
 
