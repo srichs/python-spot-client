@@ -445,6 +445,7 @@ class SpotFeed:
 
 
 __all__ = [
+    "_coerce_bool",
     "_coerce_float",
     "_coerce_int",
     "_parse_datetime",
